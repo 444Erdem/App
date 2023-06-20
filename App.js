@@ -24,7 +24,6 @@ export default function App() {
             style={{
               alignItems: "center",
               backgroundColor: "#D3D3D3",
-              gap: 10,
             }}
           >
             {new Array(10).fill(0).map((_, index) => (
@@ -34,6 +33,7 @@ export default function App() {
                   padding: 20,
                   backgroundColor: "white",
                   paddingLeft: 30,
+                  marginBottom: 10,
                 }}
               >
                 <View style={{ flexDirection: "row", gap: 30 }}>
