@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,6 +7,10 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
+  Alert,
+  Modal,
+  Pressable,
+  TextInput,
 } from "react-native";
 
 const image = {
@@ -16,6 +21,7 @@ const icon = {
 };
 
 export default function App() {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <SafeAreaView>
       <View>
@@ -37,7 +43,11 @@ export default function App() {
                 }}
               >
                 <View style={{ flexDirection: "row", gap: 30 }}>
-                  <Image source={image} style={styles.image}></Image>
+                  <Image
+                    source={image}
+                    style={styles.image}
+                    transition={1000}
+                  ></Image>
                   <View style={{ marginRight: 110 }}>
                     <Text>John Smith</Text>
                     <Text style={{ color: "gray", marginTop: 10 }}>
@@ -54,27 +64,37 @@ export default function App() {
             ))}
           </View>
         </ScrollView>
-        <View
-          style={{
-            width: 60,
-            height: 60,
-            backgroundColor: "green",
-            position: "absolute",
-            bottom: 30,
-            right: 30,
-            borderRadius: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontSize: 40,
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              setModalVisible(!modalVisible);
             }}
           >
-            +
-          </Text>
+            <View style={styles.centeredView1}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Post your thoughts! Welcome to Textnote!
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="enter the text"
+                ></TextInput>
+                <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                  <Text>Post</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.textStyle}>+</Text>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -91,5 +111,56 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginTop: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    position: "absolute",
+    bottom: 30,
+    right: 30,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 10,
+    padding: 20,
+    paddingVertical: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "green",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 40,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
   },
 });
