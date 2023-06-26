@@ -3,17 +3,26 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
-  ScrollView,
-  SafeAreaView,
   Alert,
   Modal,
   Pressable,
   TextInput,
 } from "react-native";
+import axios from "axios";
+
+const baseUrl = {
+  uri: "http://192.168.4.79:3000/api/",
+};
 
 export default function Modals() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [text, setText] = useState("");
+
+  const createPost = () => {
+    // const text1 = text;
+    axios.post(baseUrl.uri + "create-post", { text: text });
+  };
+  console.log("text", text);
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -33,16 +42,23 @@ export default function Modals() {
             <TextInput
               style={styles.input}
               placeholder="enter the text"
+              onChangeText={(text) => {
+                setText(text);
+              }}
+              value={text}
             ></TextInput>
             <Pressable
               onPress={() => setModalVisible(!modalVisible)}
               style={styles.button}
             >
-              <Text style={styles.modalText}>Post</Text>
+              <Text style={styles.modalText} onPress={createPost}>
+                Post
+              </Text>
             </Pressable>
           </View>
         </View>
       </Modal>
+
       <Pressable
         style={[styles.button, styles.buttonOpen]}
         onPress={() => setModalVisible(true)}
@@ -53,23 +69,13 @@ export default function Modals() {
   );
 }
 const styles = StyleSheet.create({
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 15,
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 20,
-  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
     position: "absolute",
-    bottom: 30,
+    bottom: 0,
     right: 30,
   },
   centeredView1: {
@@ -81,7 +87,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "pink",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -99,10 +105,10 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingVertical: 10,
     elevation: 2,
-    backgroundColor: "green",
+    backgroundColor: "#DE3163",
   },
   buttonOpen: {
-    backgroundColor: "green",
+    backgroundColor: "#DE3163",
   },
   buttonClose: {
     backgroundColor: "#2196F3",
@@ -115,6 +121,7 @@ const styles = StyleSheet.create({
   modalText: {
     textAlign: "center",
     fontSize: 18,
+    color: "white",
   },
   input: {
     height: 45,
@@ -124,5 +131,6 @@ const styles = StyleSheet.create({
     width: 300,
     margin: 20,
     fontSize: 17,
+    fontWeight: "bold",
   },
 });

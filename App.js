@@ -6,8 +6,8 @@ import Modals from "./Components/Modal.js";
 
 export default function App() {
   return (
-    <SafeAreaView>
-      <View>
+    <SafeAreaView style={{ backgroundColor: "#D8BFD8" }}>
+      <View style={{ position: "relative", height: "100%" }}>
         <Posts></Posts>
         <Modals></Modals>
       </View>
