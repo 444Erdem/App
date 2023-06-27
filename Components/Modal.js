@@ -19,7 +19,6 @@ export default function Modals() {
   const [text, setText] = useState("");
 
   const createPost = () => {
-    // const text1 = text;
     axios.post(baseUrl.uri + "create-post", { text: text });
   };
   console.log("text", text);
