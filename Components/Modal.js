@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 
 const baseUrl = {
-  uri: "http://192.168.4.79:3000/api/",
+  uri: "http://192.168.4.37:3000/api/",
 };
 
 export default function Modals() {
