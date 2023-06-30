@@ -25,36 +25,99 @@ const baseUrl = {
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [text, setText] = useState("");
 
-  useEffect(() => {
+  function getPosts() {
     fetch("http://192.168.4.37:3000/api/get-posts")
       .then((res) => res.json())
       .then((data) => setPosts(data.documents));
+  }
+
+  useEffect(() => {
+    getPosts();
   }, []);
+
+  const createPost = () => {
+    axios
+      .post(baseUrl.uri + "create-post", { text: text })
+      .then(setModalVisible(false))
+      .then((res) => {
+        getPosts();
+      });
+  };
+  console.log("text", text);
+
   return (
-    <ScrollView>
-      {posts.map((post) => (
-        <OneFeed key={post._id} post={post} />
-      ))}
-    </ScrollView>
+    <View>
+      <ScrollView>
+        {posts.map((post) => (
+          <OneFeed key={post._id} post={post} onUpdate={() => getPosts()} />
+        ))}
+      </ScrollView>
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView1}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Post your thoughts! Welcome to Textnote!
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="enter the text"
+                onChangeText={(text) => {
+                  setText(text);
+                }}
+                value={text}
+              ></TextInput>
+              <Pressable style={styles.button}>
+                <Text style={styles.modalText} onPress={createPost}>
+                  Post
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Pressable
+          style={[styles.button, styles.buttonOpen]}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.textStyle}>+</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
-function OneFeed({ post }) {
+function OneFeed({ post, onUpdate }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
 
   const deletePost = (id) => {
     console.log("id", id);
-    axios.delete(baseUrl.uri + "delete-post?id=" + id);
-    console.log("deleted");
+    axios
+      .delete(baseUrl.uri + "delete-post?id=" + id)
+      .then((res) => onUpdate());
+    alert("Deleted :)");
   };
 
   const updatePost = (id) => {
-    axios.put(baseUrl.uri + "update-post?id=" + id, { text: text });
-    setModalVisible(!modalVisible);
+    axios
+      .put(baseUrl.uri + "update-post?id=" + id, { text: text })
+      .then((res) => setModalVisible(!modalVisible))
+      .then((res) => onUpdate());
     console.log("updated");
+    alert(`updated to "${text}"`);
   };
 
   return (
@@ -94,6 +157,7 @@ function OneFeed({ post }) {
                 width: 100,
                 right: 0,
                 top: 30,
+                zIndex: 5,
                 borderWidth: 1,
                 borderColor: "#E37383",
                 backgroundColor: "pink",
@@ -130,34 +194,36 @@ function OneFeed({ post }) {
                     </View>
                   </View>
                 </Modal>
+                <Pressable onPress={() => deletePost(post._id)}>
+                  <Text
+                    style={{
+                      padding: 10,
+                      paddingBottom: 20,
+                      fontStyle: "italic",
+                      fontSize: 17,
+                      borderColor: "#E37383",
+                      borderWidth: 1,
+                    }}
+                  >
+                    Delete
+                  </Text>
+                </Pressable>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                   <Text
                     style={{
                       padding: 10,
+                      paddingBottom: 16,
                       fontStyle: "italic",
                       fontSize: 17,
                       borderWidth: 1,
                       borderColor: "#E37383",
+                      zIndex: 5,
                     }}
                   >
                     Edit
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              <TouchableOpacity onPress={() => deletePost(post._id)}>
-                <Text
-                  style={{
-                    padding: 10,
-                    fontStyle: "italic",
-                    fontSize: 17,
-                    borderColor: "#E37383",
-                    borderWidth: 1,
-                  }}
-                >
-                  Delete
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -179,6 +245,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     paddingLeft: 0,
+    zIndex: -1,
   },
   modal: {
     position: "absolute",
@@ -194,6 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 22,
     position: "absolute",
+    zIndex: 5,
     bottom: 0,
     right: 30,
   },
